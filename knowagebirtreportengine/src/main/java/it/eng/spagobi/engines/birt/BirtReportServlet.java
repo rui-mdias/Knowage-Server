@@ -698,14 +698,14 @@ public class BirtReportServlet extends HttpServlet {
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.EXCEL_RENDER_FORMAT)) {
 			renderOption = new EXCELRenderOption();
 			setMSOfficeEmitterId("xls", renderOption);
-			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", true);
+			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", false);
 			response.setContentType("application/vnd.ms-excel");
 			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".xls");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("xlsx")) {
 			renderOption = new EXCELRenderOption();
 			renderOption.setOption("excel_native_charts", false);
 			setMSOfficeEmitterId("xlsx", renderOption);
-			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", true);
+			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", false);
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("ppt")) {
