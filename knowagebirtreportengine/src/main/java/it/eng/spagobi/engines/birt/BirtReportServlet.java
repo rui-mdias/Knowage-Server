@@ -649,8 +649,10 @@ public class BirtReportServlet extends HttpServlet {
 		Map userProfileAttrs = UserProfileUtils.getProfileAttributes(profile);
 		Map context = getTaskContext(userId, params, request, resPathJNDI, userProfileAttrs);
 
-		String templateFileName = request.getParameter("template_file_name");
-		logger.debug("templateFileName -- [" + templateFileName + "]");
+		//String templateFileName = request.getParameter("template_file_name"); RAD 2024-10-31
+		//logger.debug("templateFileName -- [" + templateFileName + "]");
+		String templateFileName = request.getParameter("documentName"); // RAD 2024-10-31
+		logger.debug("documentName -- [" + templateFileName + "]");
 		if (templateFileName == null || templateFileName.trim().equals(""))
 			templateFileName = "report";
 		IRenderOption renderOption = null;
@@ -684,16 +686,21 @@ public class BirtReportServlet extends HttpServlet {
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.EXCEL_RENDER_FORMAT)) {
 			renderOption = new EXCELRenderOption();
 			setMSOfficeEmitterId("xls", renderOption);
-			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", true);
+			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", false); // Múltiplas sheets em vez de uma única
 			response.setContentType("application/vnd.ms-excel");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xls");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("xlsx")) {
-			renderOption = new EXCELRenderOption();
-			renderOption.setOption("excel_native_charts", false);
-			setMSOfficeEmitterId("xlsx", renderOption);
-			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", true);
-			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
+		    renderOption = new EXCELRenderOption();
+		    setMSOfficeEmitterId("xlsx", renderOption);
+
+		    // Configuração para múltiplas folhas com quebras de página
+		    renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", false);  // Múltiplas sheets em vez de uma única
+		    renderOption.setOption("ExcelEmitter.ExcelFormat", "xlsx");  // Especificar formato xlsx
+		    renderOption.setOption("excel_native_charts", true);
+
+		    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		    response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
+			
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("ppt")) {
 			renderOption = new RenderOption();
 			setMSOfficeEmitterId("ppt", renderOption);
