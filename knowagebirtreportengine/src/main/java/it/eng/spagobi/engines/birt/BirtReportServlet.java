@@ -655,7 +655,7 @@ public class BirtReportServlet extends HttpServlet {
 		//String templateFileName = request.getParameter("template_file_name"); RAD 2024-10-31
 		//logger.debug("templateFileName -- [" + templateFileName + "]");
 		//String templateFileName = request.getParameter("documentName"); // RAD 2024-10-31
-		String templateFileName = request.getParameter("documentLabel"); // RAD 2024-11-06
+		String templateFileName = request.getParameter("documentName"); // RAD 2024-11-06
 		logger.debug("documentName -- [" + templateFileName + "]");
 		if (templateFileName == null || templateFileName.trim().equals(""))
 			templateFileName = "report";
