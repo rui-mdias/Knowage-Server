@@ -39,6 +39,9 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -651,10 +654,19 @@ public class BirtReportServlet extends HttpServlet {
 
 		//String templateFileName = request.getParameter("template_file_name"); RAD 2024-10-31
 		//logger.debug("templateFileName -- [" + templateFileName + "]");
-		String templateFileName = request.getParameter("documentName"); // RAD 2024-10-31
+		//String templateFileName = request.getParameter("documentName"); // RAD 2024-10-31
+		String templateFileName = request.getParameter("documentLabel"); // RAD 2024-11-06
 		logger.debug("documentName -- [" + templateFileName + "]");
 		if (templateFileName == null || templateFileName.trim().equals(""))
 			templateFileName = "report";
+
+		// Formato de data e hora: yyyyMMddHHmmss
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+		String dateTime = formatter.format(new Date());
+
+		// Concatena templateFileName com data e hora
+		templateFileName += "_" + dateTime;		
+	
 		IRenderOption renderOption = null;
 
 		if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.PDF_RENDER_FORMAT)) {
