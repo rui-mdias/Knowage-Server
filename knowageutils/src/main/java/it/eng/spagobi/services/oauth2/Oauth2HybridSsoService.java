@@ -50,6 +50,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.OAuth2.OAuth2Client;
 import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.common.JWTSsoService;
@@ -140,6 +141,14 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 				logger.debug("User name not found");
 			}
 
+			String email = getEmail(jsonObject);
+			if (StringUtilities.isNotEmpty(email)) {
+				logger.debug("Email is [" + email + "]");
+				claims.put(JWTSsoService.EMAIL_CLAIM, email);
+			} else {
+				logger.debug("Email not found");
+			}
+
 			String jwtToken = createJWTToken(claims);
 			LogMF.debug(logger, "JWT token created:\n{0}", jwtToken);
 			return jwtToken;
@@ -214,5 +223,23 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 				.collect(Collectors.joining(" ")); // join values
 		// @formatter:on
 	}
+
+		private String getEmail(JSONObject jsonObject) {
+		String emailClaimsConfig = OAuth2Config.getInstance().getUserEmailClaim();
+		String[] emailClaims = emailClaimsConfig.split(" "); // configuration may be something like "name surname" i.e. a composition of different claims
+		// @formatter:off
+		return Arrays.asList(emailClaims).stream() // iterate over all claims (for example "email")
+				.filter(jsonObject::has) // we filter out claim email that are not available in input JSON object
+				.map(claimName -> {
+					try {
+						return jsonObject.getString(claimName); // for each claim get its value from JSON object
+					} catch (JSONException e) {
+						throw new SpagoBIRuntimeException("An error occurred while getting email, parsing JSON object:\n" + jsonObject, e);
+					}
+				})
+				.collect(Collectors.joining(" ")); // join values
+		// @formatter:on
+	}
+
 
 }

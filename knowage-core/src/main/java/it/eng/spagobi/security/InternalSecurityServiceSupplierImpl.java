@@ -27,6 +27,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.auth0.jwt.interfaces.Claim;
+
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -103,21 +105,31 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 	@Override
 	public SpagoBIUserProfile checkAuthenticationWithToken(String userId, String token) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean checkAuthorization(String userId, String function) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public SpagoBIUserProfile createUserProfile(String jwtToken) {
 		LOGGER.debug("IN - JWT token: " + jwtToken);
+
 		String userId = JWTSsoService.jwtToken2userId(jwtToken);
 		LOGGER.debug("userId: " + userId);
+		
+		String email = null;
+		Map<String, Claim> claims = JWTSsoService.getClaims(jwtToken);
+		if (claims.containsKey(JWTSsoService.EMAIL_CLAIM)) {
+			Claim emailClaim = claims.get(JWTSsoService.EMAIL_CLAIM);
+			email = emailClaim.asString();
+		} else {
+			email = null;
+		}
+		LOGGER.debug("email: " + email);
+		
 		SpagoBIUserProfile profile = null;
 
 		SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
@@ -160,7 +172,15 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 			}
 		}
 
-		LOGGER.debug("Attributes load into SpagoBI profile: " + attributes);
+		// add email as attribute
+		if (email != null && !email.isEmpty()) {
+			LOGGER.debug("Email is [" + email + "]");
+			attributes.put("email", email);
+		} else {
+			LOGGER.debug("Email not found");
+		}
+
+		LOGGER.debug("Attributes load into Knowage profile: " + attributes);
 
 		// end load profile attributes
 

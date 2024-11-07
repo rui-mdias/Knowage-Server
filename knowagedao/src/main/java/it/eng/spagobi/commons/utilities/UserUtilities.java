@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,6 +73,9 @@ import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
 import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
+import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.common.SsoServiceFactory;
@@ -217,20 +221,28 @@ public class UserUtilities {
 		return internalUser == null;
 	}
 
-	private static void importUser(SpagoBIUserProfile user) {
+	private static void importUser(SpagoBIUserProfile user) throws Exception {
+		LOGGER.debug("IN - importUser");
+
 		SbiUser newUser = fromSpagoBIUserProfile2SbiUser(user);
 		ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
 		userDAO.setTenant(user.getOrganization());
 		userDAO.fullSaveOrUpdateSbiUser(newUser);
 	}
 
-	protected static SbiUser fromSpagoBIUserProfile2SbiUser(SpagoBIUserProfile user) {
-		SbiUser newUser = new SbiUser();
+	protected static SbiUser fromSpagoBIUserProfile2SbiUser(SpagoBIUserProfile user) throws Exception {
+		LOGGER.debug("IN - fromSpagoBIUserProfile2SbiUser");
 
+		SbiUser newUser = new SbiUser();
 		newUser.setUserId(user.getUserId());
 		newUser.setFullName(user.getUserName());
 		newUser.setIsSuperadmin(user.getIsSuperadmin());
 		newUser.getCommonInfo().setOrganization(user.getOrganization());
+
+		LOGGER.debug("Set userId " + newUser.getUserId() +
+						" - fullname " + newUser.getFullName() +
+						" - superAdmin " + newUser.getFullName() +
+						" - commonInfo " + newUser.getCommonInfo());
 
 		List<String> roleNamesList = Arrays.asList(user.getRoles());
 
@@ -251,9 +263,40 @@ public class UserUtilities {
 				.filter(x -> x != null)  // to filter roles there were not found into database
 				.collect(Collectors.toList());
 		// @formatter:on
+		LOGGER.debug("Filtered roles for user " + user.getUserName());
+
 
 		newUser.setSbiExtUserRoleses(new HashSet<>(rolesList));
+
+		Map<String, Object> map = user.getAttributes();
+		String email = (String) map.get("email");
+		LOGGER.debug("email " + email);
+		if (email != null && !email.equals("")) {
+			Set<SbiUserAttributes> attributes = new HashSet<>();
+			ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
+			attrDao.setTenant(user.getOrganization());
+
+			int idAttributeMail = attrDao.loadSbiAttributeByName("email").getAttributeId();
+			LOGGER.debug("idAttributeMail " + idAttributeMail);
+			addAttribute(attributes, idAttributeMail, email, user.getOrganization());
+			LOGGER.debug("Attributes: " + attributes);
+			newUser.setSbiUserAttributeses(attributes);
+
+		}
+
 		return newUser;
+	}
+
+	private static void addAttribute(Set<SbiUserAttributes> attributes, int attrId, String attrValue, String tenant) {
+
+		if (attrValue != null) {
+			SbiUserAttributes a = new SbiUserAttributes();
+			a.getCommonInfo().setOrganization(tenant);
+			SbiUserAttributesId id = new SbiUserAttributesId(attrId);
+			a.setId(id);
+			a.setAttributeValue(attrValue);
+			attributes.add(a);
+		}
 	}
 
 	private static boolean importUsersIsEnabled() {
@@ -541,8 +584,9 @@ public class UserUtilities {
 				if (role != null) {
 					roles.add(role);
 					LOGGER.debug("Add Rolename ( " + rolename + ") ");
-				} else
+				} else {
 					LOGGER.debug("Rolename ( " + rolename + ") doesn't exist in EXT_ROLES");
+				}
 			}
 
 			UserFunctionality userFunct = new UserFunctionality();
