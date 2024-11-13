@@ -96,6 +96,14 @@
                     "label": "menu.modelCatalogResourceManagement",
                     "to": "/models-management",
                     "toBeLicensed": "KnowagePA"
+                },
+                {
+                    "label": "menu.Scheduler",
+                    "to": "/scheduler"
+                },
+                {
+                    "label": "menu.SchedulerMonitor",
+                    "to": "schedulation-agenda"
                 }
             ]
         },
