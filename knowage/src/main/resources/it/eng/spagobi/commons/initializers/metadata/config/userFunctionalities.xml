@@ -59,6 +59,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonWidget" description="CreatePythonWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonDataset" description="CreatePythonDataset" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="LicenseReadOnly" description="LicenseReadOnly" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="SchedulerManagement" description="SchedulerManagement"/>
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -126,7 +127,8 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="QbeAdvancedSaving" description="QbeAdvancedSaving"/>	
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CategoryManagement" description="CategoryManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MondrianSchemaManagement" description="MondrianSchemaManagement"/>
-		
+	<USER_FUNCTIONALITY productType="KnowageSI" name="SchedulerManagement" description="SchedulerManagement"/>	
+	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
@@ -175,6 +177,8 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ProfileAttributeListManagement" description="ProfileAttributeListManagement" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="LicenseReadOnly" description="LicenseReadOnly" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="CategoryManagement" description="CategoryManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulerManagement" description="SchedulerManagement"/>	
+
 	
 	<!-- Authorizations for KnowagePM -->
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintManagement" description="ConstraintManagement"/>
@@ -219,6 +223,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ReadRoles" description="ReadRoles" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ProfileAttributeListManagement" description="ProfileAttributeListManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LicenseReadOnly" description="LicenseReadOnly" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="SchedulerManagement" description="SchedulerManagement"/>
 	
 	<!-- Authorizations for KnowageLI -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="AnalyticalWidget" description="AnalyticalWidget" />
@@ -274,6 +279,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ReadRoles" description="ReadRoles" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ProfileAttributeListManagement" description="ProfileAttributeListManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="LicenseReadOnly" description="LicenseReadOnly" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="SchedulerManagement" description="SchedulerManagement"/>	
 
 	<!-- Authorizations for KnowagePA -->
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement" />
@@ -324,5 +330,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="PythonDataset" description="CreatePythonDataset" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ProfileAttributeListManagement" description="ProfileAttributeListManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="LicenseReadOnly" description="LicenseReadOnly" /> 
+	<USER_FUNCTIONALITY productType="KnowagePA" name="SchedulerManagement" description="SchedulerManagement"/>	
 	
 </USER_FUNCTIONALITIES>
