@@ -125,7 +125,7 @@ export default defineComponent({
         async openDocumentsSelectionDialog() {
             this.$emit('loading', true)
             if (this.files.length === 0) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/folders/?includeDocs=true`).then((response: AxiosResponse<any>) => (this.files = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/?includeDocs=true`).then((response: AxiosResponse<any>) => (this.files = response.data))
             }
             this.documentsSelectionDialogVisible = true
             this.$emit('loading', false)
