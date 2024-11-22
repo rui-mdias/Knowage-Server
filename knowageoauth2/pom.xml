@@ -33,5 +33,7 @@
 		</dependency>
 		
 	</dependencies>
+
+	<finalName>knowageoauth2</finalName>
 	
 </project>
