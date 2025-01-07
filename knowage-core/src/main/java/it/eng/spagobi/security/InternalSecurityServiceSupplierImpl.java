@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -184,5 +185,20 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 	public SpagoBIUserProfile checkAuthenticationToken(String token) {
 		return this.createUserProfile(token);
 	}
+
+
+	@Override
+	public SpagoBIUserProfile createUserProfileOauth2(JSONObject jsonObjectIn) {
+		return this.createUserProfileOauth2(jsonObjectIn);
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationWithOauth2(String userId, String password) {
+		// TODO Auto-generated method stub
+		return this.checkAuthenticationWithOauth2(userId, password);
+	}
+
+	
 
 }

@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -113,6 +114,18 @@ public class GoogleSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 		profile.setUniqueIdentifier(jwtToken);
 		return profile;
+	}
+
+	@Override
+	public SpagoBIUserProfile createUserProfileOauth2(JSONObject jsonObjectIn) {
+		return new InternalSecurityServiceSupplierImpl().createUserProfileOauth2(jsonObjectIn);
+		
+	}
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationWithOauth2(String userId, String password) {
+		return new InternalSecurityServiceSupplierImpl().checkAuthenticationWithOauth2(userId, password);
+		// TODO Auto-generated method stub
 	}
 
 }

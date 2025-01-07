@@ -159,7 +159,7 @@ public class UserProfile implements IEngUserProfile {
 		toReturn.setAttributes(attributes);
 		toReturn.setFunctionalities(functionalities);
 
-		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles,
+		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, null,null,userId, organization, roles,
 				functionalities);
 
 		LOGGER.debug("End creating data preparation user profile from {} user uniquer identifier",
@@ -218,7 +218,7 @@ public class UserProfile implements IEngUserProfile {
 		toReturn.setAttributes(attributes);
 		toReturn.setFunctionalities(functionalities);
 
-		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles,
+		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, null,null,userId, organization, roles,
 				functionalities);
 
 		LOGGER.debug("End creating scheduler user profile from {} user uniquer identifier", userUniqueIdentifier);
@@ -290,8 +290,8 @@ public class UserProfile implements IEngUserProfile {
 
 	}
 
-	private static void setSpagoBiUserProfileIntoUserProfile(UserProfile userProfile, String userUniqueIdentifier,
-			String userId, String organization, List<String> roles, List<String> functionalities) {
+	private static void setSpagoBiUserProfileIntoUserProfile(UserProfile userProfile, String userUniqueIdentifier, 
+		String refreshtoken, String clientid ,String userId, String organization, List<String> roles, List<String> functionalities) {
 
 		HashMap attributes = new HashMap();
 		String[] functionalitiesAsArray = functionalities.toArray(new String[0]);
@@ -299,12 +299,14 @@ public class UserProfile implements IEngUserProfile {
 		boolean isSuperadmin = false;
 
 		SpagoBIUserProfile spagoBiUserProfile = new SpagoBIUserProfile(attributes, functionalitiesAsArray, isSuperadmin,
-				organization, rolesAsArray, userUniqueIdentifier, userId, userId);
+				organization, rolesAsArray, userUniqueIdentifier, refreshtoken, clientid, userId, userId);
 
 		userProfile.setSpagoBIUserProfile(spagoBiUserProfile);
 	}
 
 	private String userUniqueIdentifier = null;
+	private String refreshtoken = null;
+	private String clientid = null;
 	private String userId = null;
 	private String userName = null;
 	private Map<String, Object> userAttributes = null;
@@ -343,6 +345,8 @@ public class UserProfile implements IEngUserProfile {
 		LOGGER.debug("IN");
 		this.setSpagoBIUserProfile(profile);
 		this.userUniqueIdentifier = profile.getUniqueIdentifier();
+		this.refreshtoken = profile.getRefreshToken();
+		this.clientid = profile.getClientId();
 		this.userName = profile.getUserName();
 		this.userId = profile.getUserId();
 		this.organization = profile.getOrganization();
@@ -391,6 +395,8 @@ public class UserProfile implements IEngUserProfile {
 
 	public UserProfile(String userUniqueIdentifier, String userId, String userName, String organization) {
 		this.userUniqueIdentifier = userUniqueIdentifier;
+		this.refreshtoken = refreshtoken;
+		this.clientid = clientid;
 		this.userId = userId;
 		this.userName = userName;
 		this.organization = organization;
@@ -402,6 +408,8 @@ public class UserProfile implements IEngUserProfile {
 
 	public UserProfile(UserProfile other) {
 		this.userUniqueIdentifier = other.userUniqueIdentifier;
+		this.refreshtoken = other.refreshtoken;
+		this.clientid = other.clientid;
 		this.userId = other.userId;
 		this.userName = other.userName;
 		this.userAttributes = other.userAttributes;
@@ -564,7 +572,15 @@ public class UserProfile implements IEngUserProfile {
 	public Object getUserUniqueIdentifier() {
 		return userUniqueIdentifier;
 	}
-
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spago.security.IEngUserProfile#getRefreshToken()
+	 */
+	
+	public Object getRefreshToken() {
+		return refreshtoken;
+	}
 	/*
 	 * (non-Javadoc)
 	 *
@@ -708,7 +724,8 @@ public class UserProfile implements IEngUserProfile {
 
 	@Override
 	public String toString() {
-		return "UserProfile [userUniqueIdentifier=" + userUniqueIdentifier + ", userId=" + userId + ", userName="
+		return "UserProfile [userUniqueIdentifier=" + userUniqueIdentifier + ", refreshtoken=" + refreshtoken
+				+ ", clientid=" + clientid + ", userId=" + userId + ", userName="
 				+ userName + ", userAttributes=" + userAttributes + ", roles=" + roles + ", organization="
 				+ organization + ", isSuperadmin=" + isSuperadmin + "]";
 	}

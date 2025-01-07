@@ -18,6 +18,7 @@
 package it.eng.spagobi.services.security.service;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -74,6 +75,17 @@ public class SecurityServiceSupplierFactory {
 			return instance.checkAuthorization(userId, function);
 		}
 
+		@Override
+		public SpagoBIUserProfile createUserProfileOauth2(JSONObject jsonObjectin) {
+			return instance.createUserProfileOauth2(jsonObjectin);
+		}
+
+		@Override
+		public SpagoBIUserProfile checkAuthenticationWithOauth2(String userId, String password) {
+			return instance.checkAuthenticationWithOauth2(userId, password);
+	
+		}
+
 	}
 
 	/**
@@ -109,7 +121,20 @@ public class SecurityServiceSupplierFactory {
 			}
 			return userProfile;
 		}
-
+		@Override
+		public SpagoBIUserProfile checkAuthenticationWithOauth2(String userId, String password) {
+			SpagoBIUserProfile userProfile = null;
+			if (isLoginAttemtpsCounterBelowLimit(userId)) {
+				ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+				userProfile = super.checkAuthenticationWithOauth2(userId, password);
+				if (userProfile != null) {
+					userDao.resetFailedLoginAttempts(userId);
+				} else {
+					userDao.incrementFailedLoginAttempts(userId);
+				}
+			}
+			return userProfile;
+		}
 		@Override
 		public SpagoBIUserProfile checkAuthenticationToken(String token) {
 			// TODO

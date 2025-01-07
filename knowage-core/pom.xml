@@ -31,7 +31,11 @@
 			<artifactId>knowage-pm-dto</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+		<dependency>
+    		<groupId>it.eng.knowage</groupId>
+    		<artifactId>knowageoauth2</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>

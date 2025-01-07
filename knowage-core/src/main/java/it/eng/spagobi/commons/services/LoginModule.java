@@ -88,6 +88,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
 import it.eng.spagobi.wapp.util.MenuUtilities;
+import it.eng.knowage.security.oauth2.OAuth2SecurityServiceSupplier;
 
 public class LoginModule extends AbstractHttpModule {
 
@@ -165,6 +166,7 @@ public class LoginModule extends AbstractHttpModule {
 
 		String userId = (String) request.getAttribute("userID");
 		logger.debug("userID=" + userId);
+		logger.debug("READ DEBUG LoginModule userID=" + userId);
 		if (userId == null) {
 			if (previousProfile != null) {
 				profile = previousProfile;
@@ -198,14 +200,27 @@ public class LoginModule extends AbstractHttpModule {
 		logger.debug("isInternalSecurity: " + isInternalSecurity);
 
 		ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+		OAuth2SecurityServiceSupplier oauth2securityservicesupplier = new OAuth2SecurityServiceSupplier();
+
+		String refreshtoken = null;
+		String clientid = null;
 		// if userID is specified, look for password and try to authenticate user
 		if (userId != null) {
 			String pwd = (String) request.getAttribute("password");
 			SpagoBIUserProfile userProfile = null;
 			IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.login.authentication");
 			try {
-
-				userProfile = supplier.checkAuthentication(userId, pwd);
+				logger.debug("READ DEBUG Z LoginModule activeSoo=" + activeSoo);
+				if (activeSoo){
+					userProfile = oauth2securityservicesupplier.checkAuthenticationWithOauth2(userId, pwd);
+				}else{
+					userProfile = supplier.checkAuthentication(userId, pwd);	
+				}
+				
+				//refreshtoken = userProfile.getRefreshToken(); 
+				
+				
+				//logger.debug("READ DEBUG Z LoginModule profile=" + refreshtoken);
 				if (userProfile == null) {
 					logger.error("userName/pwd uncorrect");
 					EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
@@ -285,6 +300,9 @@ public class LoginModule extends AbstractHttpModule {
 			}
 
 			userId = userProfile.getUniqueIdentifier();
+			
+			refreshtoken = userProfile.getRefreshToken(); 
+			clientid =  userProfile.getClientId();
 
 		}
 
@@ -293,7 +311,8 @@ public class LoginModule extends AbstractHttpModule {
 
 			logger.debug("START - Getting user profile");
 
-			profile = UserUtilities.getUserProfile(userId);
+			//profile = UserUtilities.getUserProfile(userId);
+			profile = UserUtilities.getUserProfileOauth2(userId, clientid, refreshtoken);
 			if (profile == null) {
 				logger.error("user not created");
 				EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
@@ -358,7 +377,6 @@ public class LoginModule extends AbstractHttpModule {
 			profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
 			// put user profile into session
 			storeProfileInSession((UserProfile) profile, permSess, httpSession);
-
 			// PM-int
 			LoginEventBuilder eventBuilder = new LoginEventBuilder();
 			UserProfile up = (UserProfile) profile;
@@ -447,6 +465,10 @@ public class LoginModule extends AbstractHttpModule {
 
 		permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		httpSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+// RETIRAR
+		logger.debug("REAL DEBUG TTT LoginModule userProfile" + userProfile);
+		logger.debug("REAL DEBUG TTT LoginModule permanentContainer" + permanentContainer);
+// RETIRAR
 
 		logger.debug("OUT");
 	}

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
@@ -192,6 +193,20 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 	@Override
 	public boolean checkAuthorization(String userId, String function) {
 		throw new UnreachableCodeException("Method not implemented!");
+	}
+
+
+
+	@Override
+	public SpagoBIUserProfile createUserProfileOauth2(JSONObject jsonObjectIn) {
+
+		return createUserProfileOauth2(jsonObjectIn);
+	}
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationWithOauth2(String userId, String password) {
+		// TODO Auto-generated method stub
+		return checkAuthenticationWithOauth2(userId, password);
 	}
 
 }

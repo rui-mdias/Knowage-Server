@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,6 +89,7 @@ import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.cache.UserProfileCache;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.knowage.security.oauth2.OAuth2SecurityServiceSupplier;
 
 public class UserUtilities {
 
@@ -201,7 +203,7 @@ public class UserUtilities {
 		return profile;
 	}
 
-	public static IEngUserProfile getUserProfile(String userId) throws Exception {
+	public static IEngUserProfile getUserProfile (String userId) throws Exception {
 
 		Monitor getUserProfileMonitor = MonitorFactory.start("KnowageDAO.UserUtilities.getUserProfile");
 
@@ -276,6 +278,94 @@ public class UserUtilities {
 		}
 
 	}
+
+	// ini - Nova implementação
+	public static IEngUserProfile getUserProfileOauth2(String userId, String clientId, String refreshtoken) throws Exception {
+
+		Monitor getUserProfileMonitor = MonitorFactory.start("KnowageDAO.UserUtilities.getUserProfile");
+
+		logger.debug("IN.userId=" + userId + "IN.clientId=" + clientId + "IN.refreshtoken=" + refreshtoken);
+		CacheInterface cache = UserProfileCache.getCache();
+		// Search UserProfile in cache
+		if (cache.contains(userId)) {
+			UserProfile cachedUserProfile = (UserProfile) cache.get(userId);
+			getUserProfileMonitor.stop();
+			return cachedUserProfile;
+		} else {
+			if (userId == null) {
+				return null;
+			}
+
+			try {
+				UserProfile profile;
+				if (UserProfile.isSchedulerUser(userId)) {
+					logger.debug("User [" + userId + "] has been recognized as a scheduler user.");
+					profile = UserProfile.createSchedulerUserProfile(userId);
+				} else if (UserProfile.isDataPreparationUser(userId)) {
+					logger.debug("User [" + userId + "] has been recognized as a data preparation user.");
+					profile = UserProfile.createDataPreparationUserProfile(userId);
+				} else if (PublicProfile.isPublicUser(userId)) {
+					logger.debug("User [" + userId + "] has been recognized as a public user.");
+					String decodedUserId = JWTSsoService.jwtToken2userId(userId);
+					SpagoBIUserProfile user = PublicProfile.createPublicUserProfile(decodedUserId);
+					profile = new UserProfile(user);
+				} else {
+					//ISecurityServiceSupplier supplier = createISecurityServiceSupplier();
+					OAuth2SecurityServiceSupplier oauth2securityservicesupplier = new OAuth2SecurityServiceSupplier();
+					// Criar um objeto JSON
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("access_token", userId);
+					jsonObject.put("client_id", clientId);
+					jsonObject.put("refresh_token", refreshtoken);
+					
+					
+					//SpagoBIUserProfile user = supplier.createUserProfile(userId);
+					SpagoBIUserProfile user = oauth2securityservicesupplier.createUserProfileOauth2(jsonObject);
+
+					if (user == null) {
+						return null;
+					}
+
+					checkTenant(user);
+
+					if (userHasNoRoles(user)) {
+						setDefaultRole(user);
+					}
+
+					if (importUsersIsEnabled() && userIsNotInInternalMetadata(user)) {
+						importUser(user);
+					}
+
+					user.setFunctions(readFunctionality(user));
+
+					profile = new UserProfile(user);
+
+				}
+
+				if (profile != null) {
+					// putting locale language and country on user attributes
+					Locale defaultLocale = GeneralUtilities.getDefaultLocale();
+					profile.addAttributes(SpagoBIConstants.LANGUAGE, defaultLocale.getLanguage());
+					profile.addAttributes(SpagoBIConstants.COUNTRY, defaultLocale.getCountry());
+
+					// put profile in cache
+					cache.put(userId, profile);
+				}
+				logger.debug("profile X from get profile" + profile);
+
+				return profile;
+
+			} catch (Exception e) {
+				logger.error("Exception while creating user profile", e);
+				throw new SecurityException("Exception while creating user profile", e);
+			} finally {
+				logger.debug("OUT");
+				getUserProfileMonitor.stop();
+			}
+		}
+
+	}
+	// End - Nova implementação
 
 	private static boolean userIsNotInInternalMetadata(SpagoBIUserProfile user) {
 		SbiUser internalUser = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(user.getUserId());
@@ -1171,6 +1261,8 @@ public class UserUtilities {
 			profile.getOrganization(),
 			profile.getRoles() != null ? profile.getRoles().clone() : null,
 			profile.getUniqueIdentifier(),
+			profile.getRefreshToken(),
+			profile.getClientId(),
 			profile.getUserId(),
 			profile.getUserName()
 		);

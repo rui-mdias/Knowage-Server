@@ -16,8 +16,13 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%--
 <%@page import="it.eng.spagobi.security.OAuth2.OAuth2Client"%>
 <%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
+--%>
+<%@page import="it.eng.knowage.security.OAuth2.OAuth2Client"%>
+<%@page import="it.eng.knowage.security.OAuth2.OAuth2Config"%>
+
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.json.JSONObject"%>
 
@@ -38,8 +43,8 @@ String code = request.getParameter("code");
     const clientId = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getClientId()) %>';
     const scope = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getScopes()) %>';
     const redirectUri = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getRedirectUrl()) %>';
-    const accessTokenResponse = <%= code != null ? new JSONObject(new OAuth2Client().getAccessToken(code)) : "null" %>;
-
+    const accessTokenResponse = '<%= code != null ? new JSONObject(new OAuth2Client().getAccessToken(code)) : "null" %>';
+        logger.debug("REAL DEBUG YYYY - flow2.jsp -  code:" + code + "accessTokenResponse:" + accessTokenResponse + "window.location.search:" + window.location.search);
         if (window.location.search) {
             var args = new URLSearchParams(window.location.search);
             var state = args.get("state");

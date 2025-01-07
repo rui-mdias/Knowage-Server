@@ -141,6 +141,8 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			} else {
 				// in case SSO is enabled, we get user unique identifier from request
 				userUniqueIdentifier = UserUtilities.getUserId(this.getHttpRequest());
+				logger.debug("READ DEBUG ZX LoginActionWeb userUniqueIdentifier=" + userUniqueIdentifier);
+
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOGIN", null, "KO");
 				Assert.assertNotNull(usr, "User identifier not found. Cannot build user profile object");
 

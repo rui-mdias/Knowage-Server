@@ -157,4 +157,17 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 		return createUserProfile(token);
 	}
 
+
+
+	@Override
+	public SpagoBIUserProfile createUserProfileOauth2(JSONObject jsonObjectIn) {
+		// TODO Auto-generated method stub
+		return createUserProfileOauth2(jsonObjectIn);
+	}
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationWithOauth2(String userId, String password) {
+		return checkAuthenticationWithOauth2(userId, password);
+	}
+
 }

@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.auth0.jwk.Jwk;
 import com.auth0.jwk.JwkProvider;
@@ -114,6 +115,19 @@ public class AzureSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 		profile.setUniqueIdentifier(jwtToken);
 		return profile;
+	}
+
+	@Override
+	public SpagoBIUserProfile createUserProfileOauth2(JSONObject jsonObjectIn) {
+		// TODO Auto-generated method stub
+		return new InternalSecurityServiceSupplierImpl().createUserProfileOauth2(jsonObjectIn);
+		
+	}
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationWithOauth2(String userId, String password) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'checkAuthenticationWithOauth2'");
 	}
 
 }

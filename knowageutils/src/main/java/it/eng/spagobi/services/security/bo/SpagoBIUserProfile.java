@@ -31,6 +31,10 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
 
     private java.lang.String uniqueIdentifier;
 
+    private java.lang.String refreshtoken;
+
+    private java.lang.String clientid;
+
     private java.lang.String userId;
 
     private java.lang.String userName;
@@ -45,6 +49,10 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
            java.lang.String organization,
            java.lang.String[] roles,
            java.lang.String uniqueIdentifier,
+          
+           java.lang.String refreshtoken,
+           java.lang.String clientid,
+           
            java.lang.String userId,
            java.lang.String userName) {
            this.attributes = attributes;
@@ -53,6 +61,10 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
            this.organization = organization;
            this.roles = roles;
            this.uniqueIdentifier = uniqueIdentifier;
+           
+           this.refreshtoken = refreshtoken;
+           this.clientid = clientid;
+           
            this.userId = userId;
            this.userName = userName;
     }
@@ -167,7 +179,24 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
         return uniqueIdentifier;
     }
 
-
+    /**
+     * Gets the refreshtoken value for this SpagoBIUserProfile.
+     * 
+     * @return refreshtoken
+     */
+    public java.lang.String getRefreshToken() {
+        return refreshtoken;
+    }
+    
+    /**
+     * Gets the clientid value for this SpagoBIUserProfile.
+     * 
+     * @return clientid
+     */
+    public java.lang.String getClientId() {
+        return clientid;
+    }
+    
     /**
      * Sets the uniqueIdentifier value for this SpagoBIUserProfile.
      * 
@@ -177,7 +206,24 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
         this.uniqueIdentifier = uniqueIdentifier;
     }
 
-
+    /**
+     * Sets the refreshtoken value for this SpagoBIUserProfile.
+     * 
+     * @param refreshtoken
+     */
+    public void setRefreshToken(java.lang.String refreshtoken) {
+        this.refreshtoken = refreshtoken;
+    }
+    
+     /**
+     * Sets the refreshtoken value for this SpagoBIUserProfile.
+     * 
+     * @param clientid
+     */
+    public void setClientId(java.lang.String clientid) {
+        this.clientid = clientid;
+    }
+ 
     /**
      * Gets the userId value for this SpagoBIUserProfile.
      * 
@@ -247,6 +293,15 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
             ((this.uniqueIdentifier==null && other.getUniqueIdentifier()==null) || 
              (this.uniqueIdentifier!=null &&
               this.uniqueIdentifier.equals(other.getUniqueIdentifier()))) &&
+            
+            ((this.refreshtoken==null && other.getRefreshToken()==null) || 
+             (this.refreshtoken!=null &&
+              this.refreshtoken.equals(other.getRefreshToken()))) &&
+
+            ((this.clientid==null && other.getClientId()==null) || 
+             (this.clientid!=null &&
+              this.clientid.equals(other.getClientId()))) &&              
+              
             ((this.userId==null && other.getUserId()==null) || 
              (this.userId!=null &&
               this.userId.equals(other.getUserId()))) &&
@@ -298,6 +353,15 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
         if (getUniqueIdentifier() != null) {
             _hashCode += getUniqueIdentifier().hashCode();
         }
+
+        if (getRefreshToken() != null) {
+            _hashCode += getRefreshToken().hashCode();
+        }
+
+        if (getClientId() != null) {
+            _hashCode += getClientId().hashCode();
+        }
+
         if (getUserId() != null) {
             _hashCode += getUserId().hashCode();
         }
@@ -350,6 +414,22 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
+
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("refreshtoken");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "refreshtoken"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("clientid");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "clientid"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+
+
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("userId");
         elemField.setXmlName(new javax.xml.namespace.QName("", "userId"));

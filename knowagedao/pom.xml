@@ -20,6 +20,15 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+ 
+ <!-- dependencia ciclica -->
+ 		<dependency>
+    		<groupId>it.eng.knowage</groupId>
+    		<artifactId>knowageoauth2</artifactId>
+    		<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+ 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>qbe-core</artifactId>

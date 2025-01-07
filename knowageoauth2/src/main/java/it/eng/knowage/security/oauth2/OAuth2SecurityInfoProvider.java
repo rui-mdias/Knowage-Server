@@ -11,8 +11,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.security.ISecurityInfoProvider;
 
 /**
@@ -22,14 +20,15 @@ import it.eng.spagobi.security.ISecurityInfoProvider;
 public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 
 	static private Logger logger = Logger.getLogger(OAuth2SecurityInfoProvider.class);
-
+	
 	/**
 	 * TODO: Is there an oauth2 standard for getting all roles?
 	 */
 	@Override
 	public List getRoles() {
 		logger.debug("IN");
-
+		DAOFactory DAO;
+		DAO = DAOFactory.getInstance();
 		List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
 
 		List<Role> roles = new ArrayList<Role>();

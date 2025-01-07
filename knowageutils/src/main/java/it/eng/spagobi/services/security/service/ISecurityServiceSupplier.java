@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.services.security.service;
 
+import org.json.JSONObject;
+
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 
 /**
@@ -29,8 +31,30 @@ public interface ISecurityServiceSupplier {
 	 * 
 	 * @return SpagoBIUserProfile
 	 */
-	SpagoBIUserProfile createUserProfile(String userId);
 
+	/**
+ 	* Authenticates a user using OAuth2 and retrieves their profile.
+ 	* 
+ 	* @param userId   the unique identifier of the user
+ 	* @param password the user's password
+ 	* @return the SpagoBIUserProfile if authentication succeeds, or null if it fails
+ 	*/
+	SpagoBIUserProfile checkAuthenticationWithOauth2(String userId, String password);	 
+	/** 
+	* Creates a user profile based on the user ID.
+	* 
+	* @param jsonInput the unique identifier of the user
+	* @return the SpagoBIUserProfile, or null if the user is not found
+	*/
+	SpagoBIUserProfile createUserProfileOauth2(JSONObject jsonInput);
+    /**
+     * Creates a user profile based on the user ID.
+     * 
+     * @param userId the unique identifier of the user
+	 * @param psw
+	 * @return the SpagoBIUserProfile, or null if the user is not found
+     */
+	SpagoBIUserProfile createUserProfile(String userId);
 	/**
 	 * if SpagoBIUserProfile is NULL the password is incorrect!!!!
 	 * 
@@ -64,5 +88,7 @@ public interface ISecurityServiceSupplier {
 	 */
 	@Deprecated
 	boolean checkAuthorization(String userId, String function);
+
+
 
 }

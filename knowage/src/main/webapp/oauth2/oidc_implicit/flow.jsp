@@ -16,9 +16,15 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<%@page import="it.eng.spagobi.services.oauth2.Oauth2SsoService"%>
+<%--
 <%@page import="it.eng.spagobi.security.OAuth2.OAuth2Client"%>
 <%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
+--%>
+<%@page import="it.eng.knowage.security.OAuth2.OAuth2Client"%>
+<%@page import="it.eng.knowage.security.OAuth2.OAuth2Config"%>
+
+<%@page import="it.eng.spagobi.services.oauth2.Oauth2SsoService"%>
+
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.json.JSONObject"%>
 
@@ -46,6 +52,7 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
       window.sessionStorage.setItem("oidc_origin", authorization_endpoint.origin);
       window.sessionStorage.setItem("redirect_uri", redirectUri);
       window.sessionStorage.setItem("nonce", nonce);
+      logger.debug("REAL DEBUG YYZZ - flow.jsp -  nonce:" + nonce + "clientId:" + clientId + "authorizeEndpoint:" + authorizeEndpoint + "authorization_endpoint:" + authorization_endpoint + "window.location.hash:" + window.location.hash );
 
       if (window.location.hash) {
         var args = new URLSearchParams(window.location.hash.substring(1));

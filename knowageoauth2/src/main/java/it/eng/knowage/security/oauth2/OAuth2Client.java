@@ -80,8 +80,30 @@ public class OAuth2Client {
 			httppost.setParameter("username", username);
 			httppost.setParameter("password", password);
 			httppost.setParameter("client_id", config.getClientId());
+			httppost.setParameter("scope", config.getScopes());			
 
 			return sendHttpPost(httppost);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while trying to get access token from OAuth2 provider", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	public JSONObject getAccessOAuth2TokenWithPassword(String username, String password) {
+		logger.debug("IN");
+		try {
+			logger.debug("using password grant");
+			PostMethod httppost = createPostMethodForAccessToken();
+			httppost.setParameter("grant_type", "password");
+			httppost.setParameter("username", username);
+			httppost.setParameter("password", password);
+			httppost.setParameter("client_id", config.getClientId());
+			httppost.setParameter("scope", config.getScopes());			
+			
+			logger.debug("Oauth2client REAL DEBUG AA" + username);
+			
+			return sendOauth2HttpPost(httppost);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while trying to get access token from OAuth2 provider", e);
 		} finally {
@@ -105,6 +127,8 @@ public class OAuth2Client {
 
 	// It sends the http request specified in PostMethod and returns the access
 	// token returned by server
+	//private String sendHttpPost(PostMethod httppost) throws HttpException, IOException, JSONException {
+
 	private String sendHttpPost(PostMethod httppost) throws HttpException, IOException, JSONException {
 		HttpClient httpClient = getHttpClient();
 		int statusCode = httpClient.executeMethod(httppost);
@@ -119,10 +143,35 @@ public class OAuth2Client {
 		}
 
 		String responseStr = new String(response);
+		logger.debug("REAL DEBUG X Resutado da resposta:" + responseStr);
 		LogMF.debug(logger, "Server response is:\n{0}", responseStr);
 		JSONObject jsonObject = new JSONObject(responseStr);
 		String accessToken = jsonObject.getString("access_token");
-
+		
 		return accessToken;
+	}
+
+
+	private JSONObject sendOauth2HttpPost(PostMethod httppost) throws HttpException, IOException, JSONException {	
+		HttpClient httpClient = getHttpClient();
+		int statusCode = httpClient.executeMethod(httppost);
+		byte[] response = httppost.getResponseBody();
+		if (statusCode != 200) {
+			logger.error("Error while getting access token from OAuth2 provider: server returned statusCode = "
+					+ statusCode);
+			LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
+			throw new SpagoBIRuntimeException(
+					"Error while getting access token from OAuth2 provider: server returned statusCode = "
+							+ statusCode);
+		}
+		
+		String responseStr = new String(response);
+		logger.debug("REAL DEBUG X Resutado da resposta:" + responseStr);
+		LogMF.debug(logger, "Server response is:\n{0}", responseStr);
+		JSONObject jsonObject = new JSONObject(responseStr);
+//		String accessToken = jsonObject.getString("access_token");
+				
+		return jsonObject;
+//		return accessToken;
 	}
 }

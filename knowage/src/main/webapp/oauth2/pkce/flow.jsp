@@ -22,6 +22,10 @@ From https://github.com/curityio/pkce-javascript-example
 
 <%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
 
+<%--
+<%@page import="it.eng.knowage.security.OAuth2.OAuth2Config"%>
+--%>
+
 <%
 OAuth2Config oauth2Config = OAuth2Config.getInstance();
 %>
@@ -38,12 +42,12 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
     const tokenEndpoint = "<%= oauth2Config.getAccessTokenUrl() %>";
     const clientId = "<%= oauth2Config.getClientId() %>";
     const redirectUri = "<%= oauth2Config.getRedirectUrl() %>";
-
+    logger.debug("REAL DEBUG YYZY - flowpkce.jsp -  tokenEndpoint: " + tokenEndpoint + " clientId:" + clientId + " authorizeEndpoint:" + authorizeEndpoint + " redirectUri:" + redirectUri + " window.location.search:" + window.location.search );
         if (window.location.search) {
             var args = new URLSearchParams(window.location.search);
             var code = args.get("code");
             var state = args.get("state");
-            
+            alert ("code: " + code + " state:" + state);
             if (code) {
             	if (window.sessionStorage.getItem("state") !== state){
             	    throw Error("Probable session hijacking attack!");
