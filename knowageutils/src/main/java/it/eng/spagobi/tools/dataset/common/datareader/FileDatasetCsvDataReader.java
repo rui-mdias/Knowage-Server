@@ -75,8 +75,6 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	private IMetaData metaData;
 
 	public FileDatasetCsvDataReader(JSONObject jsonConf) {
-		super();
-
 		// Get File Dataset Configuration Options
 		if (jsonConf != null) {
 			try {
@@ -175,9 +173,9 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 			// the header columns are used as the keys to the Map
 			final String[] header = mapReader.getHeader(true);
 
-			if (metaData != null)
+			if (metaData != null) {
 				dataStore.setMetaData(metaData);
-			else {
+			} else {
 				// Create Datastore Metadata with header file
 				for (int i = 0; i < header.length; i++) {
 					FieldMetadata fieldMeta = new FieldMetadata();
@@ -285,8 +283,17 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 				logger.debug("Calculation of result set number is NOT enabled");
 			}
 
-			if (header.length > 0 && isUTF8BOMEncoding())
+			if (header.length > 0 && isUTF8BOMEncoding()) {
 				((FieldMetadata) dataStore.getMetaData().getFieldsMeta().get(0)).setName(escapeUTF8BOM(header[0]));
+			}
+
+			// if after elaboration there are in the list a FieldsMeta type is null (for all empty value)
+			// set type String
+			dataStore.getMetaData().getFieldsMeta().forEach(x ->{
+				if(x.getType()==null) {
+					x.setType(String.class);
+				}
+			});
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while reading csv file", e);
@@ -308,12 +315,13 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 
 	private boolean isIntegerOverflow(String currentIntStringValue) {
 		String maxIntStringValue = Integer.toString(Integer.MAX_VALUE);
-		if (currentIntStringValue.length() > maxIntStringValue.length())
+		if (currentIntStringValue.length() > maxIntStringValue.length()) {
 			return true;
-		else if (currentIntStringValue.length() < maxIntStringValue.length())
+		} else if (currentIntStringValue.length() < maxIntStringValue.length()) {
 			return false;
-		else
+		} else {
 			return currentIntStringValue.compareTo(maxIntStringValue) > 0;
+		}
 	}
 
 	@Override

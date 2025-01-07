@@ -168,6 +168,10 @@ public class UserResource extends AbstractSpagoBIResource {
 			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertUser(@Valid UserBO requestDTO) {
+		
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(request);
+		
 		ISbiUserDAO usersDao = null;
 
 		String userId = requestDTO.getUserId();
@@ -217,14 +221,27 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setSbiUserAttributeses(attributes);
 
 		String password = sbiUser.getPassword();
-		if (password != null && password.length() > 0) {
+		
+		try {
+			PasswordChecker.getInstance().checkPwd(password);
+		} catch (Exception e) {
+			LOGGER.error("Password is not valid", e);
+			String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
+			if (e instanceof EMFUserError) {
+				throw new SpagoBIServiceException(((EMFUserError) e).getDescription(), message);
+			} else {
+				throw new SpagoBIServiceException(message, e);
+			}
+		}		
+		
+		//if (password != null && password.length() > 0) {
 			try {
 				sbiUser.setPassword(Password.hashPassword(password));
 			} catch (Exception e) {
 				LOGGER.error("Impossible to encrypt Password", e);
 				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
 			}
-		}
+		//}
 
 		try {
 			Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
@@ -293,16 +310,27 @@ public class UserResource extends AbstractSpagoBIResource {
 			LOGGER.error("Impossible get attributes", e1);
 		}
 		
+		/* KNOWAGE-8687: User parameters cannot be saved without entering password (only for admin) */
 		try {
-			PasswordChecker.getInstance().isValid(sbiUserOriginal, sbiUserOriginal.getPassword(), true, requestDTO.getPassword(), requestDTO.getPassword());
-		} catch (Exception e) {
-			LOGGER.error("Password is not valid", e);
-			String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
-			if (e instanceof EMFUserError) {
-				throw new SpagoBIServiceException(message, ((EMFUserError) e).getDescription());
+			if(!(objDao.getUserProfile().getRoles().size() == 1
+					&& objDao.getUserProfile().getRoles().toArray()[0].equals("admin") 
+					&& requestDTO.getPassword() == null)) {
+						try {
+							PasswordChecker.getInstance().isValid(sbiUserOriginal, sbiUserOriginal.getPassword(), true, requestDTO.getPassword(), requestDTO.getPassword());
+						} catch (Exception e) {
+							LOGGER.error("Password is not valid", e);
+							String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
+							if (e instanceof EMFUserError) {
+								throw new SpagoBIServiceException(((EMFUserError) e).getDescription(), message);
+							} else {
+								throw new SpagoBIServiceException(message, e);
+							}
+						}
 			} else {
-				throw new SpagoBIServiceException(message, e);
+				LOGGER.debug("User management by admin");
 			}
+		} catch (EMFInternalError e) {
+			LOGGER.error("Error while validating password", e);
 		}
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {

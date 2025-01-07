@@ -112,14 +112,8 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>${apache.poi}</version>
+			<version>${apache.poi-ooxml}</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>xmlbeans</artifactId>
-					<groupId>org.apache.xmlbeans</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.maven-play-plugin.net.sf.jtidy</groupId>
@@ -131,7 +125,7 @@
 		<dependency>
 			<groupId>com.wealdtech.hawk</groupId>
 			<artifactId>hawk-core</artifactId>
-			<version>1.0.0</version>
+			<version>1.2.3</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -257,6 +251,14 @@
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils-json</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.safehaus.jug</groupId>
+			<artifactId>jug</artifactId>
+			<version>2.0.0</version>
+			<classifier>lgpl</classifier>
+			<scope>compile</scope>
 		</dependency>
 		
 	</dependencies>
